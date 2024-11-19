@@ -6,7 +6,6 @@ import {
   changeCurrentPassword,
   forgotPasswordRequest,
   getCurrentUser,
-  handleSocialLogin,
   loginUser,
   logoutUser,
   refreshAccessToken,

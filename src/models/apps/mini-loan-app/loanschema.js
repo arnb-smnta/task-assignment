@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
-const scheduledLoanRepaymentSchema = new mongoose.Schema(
+// Define the ScheduledLoanRepayment Schema
+const scheduledLoanRepaymentSchema = new Schema(
   {
     dueDate: {
       type: Date,
@@ -17,36 +18,53 @@ const scheduledLoanRepaymentSchema = new mongoose.Schema(
     },
     loanId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: loanSchema,
+      ref: "Loan", // Refers to the Loan collection
       required: true,
+    },
+    repaymentDate: {
+      type: Date,
     },
   },
   { timestamps: true }
 );
 
+// Define the Loan Schema
 const loanSchema = new Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "User", // Refers to the User collection
       required: true,
     },
-    amount: { type: Number, required: true },
-    term: { type: Number, required: true }, //Loan terms in weeks
+    amount: {
+      type: Number,
+      required: true,
+    },
+    term: {
+      type: Number,
+      required: true, // Loan term in weeks
+    },
     status: {
       type: String,
       enum: ["PENDING", "APPROVED", "PAID"],
       default: "PENDING",
     },
     scheduledRepaymentsId: [
-      { type: mongoose.Types.ObjectId, ref: scheduledLoanRepaymentSchema },
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "ScheduledLoanRepayment", // Refers to the ScheduledLoanRepayment collection
+      },
     ],
   },
   { timestamps: true }
 );
 
-export const Loan = mongoose.model("Loan", loanSchema);
-export const ScheduledLoanRepayment = mongoose.model(
+// Create Models
+const Loan = mongoose.model("Loan", loanSchema);
+const ScheduledLoanRepayment = mongoose.model(
   "ScheduledLoanRepayment",
   scheduledLoanRepaymentSchema
 );
+
+// Export the Models
+export { Loan, ScheduledLoanRepayment };

@@ -77,9 +77,11 @@ app.use(morganMiddleware);
 import { errorHandler } from "./middlewares/error.middlewares.js";
 // * App routes
 import userRouter from "./routes/apps/auth/user.routes.js";
-
+import loanRouter from "./routes/apps/mini-loan-app/mini-loan-app.routes.js";
 // * App apis
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/loans/", loanRouter);
+
 app.get("/", (req, res) => {
   res.redirect(
     `https://github.com/arnb-smnta/expense-split-prod-backend/blob/main/src/app.js`

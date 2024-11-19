@@ -22,6 +22,11 @@ export const LoanStatus = {
   APPROVED: "APPROVED",
 };
 
+export const repaymentStatus = {
+  PENDING: "PENDING",
+  PAID: "PAID",
+};
+
 export const AvailableOrderStatuses = Object.values(OrderStatusEnum);
 
 /**
