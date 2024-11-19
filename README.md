@@ -41,21 +41,26 @@ This API provides a comprehensive set of endpoints to handle user authentication
 
 ---
 
-## **Environment Variables**
+```markdown
+# **Environment Variables**
 
-Ensure the following environment variables are set in a `.env` file:
+The application requires the following environment variables to function correctly. Set these in your `.env` file.
 
-| Variable                       | Description                          | Example                     |
-| ------------------------------ | ------------------------------------ | --------------------------- |
-| `PORT`                         | Port number for the server           | `5000`                      |
-| `JWT_ACCESS_TOKEN_SECRET`      | Secret for generating access tokens  | `your-access-token-secret`  |
-| `JWT_REFRESH_TOKEN_SECRET`     | Secret for generating refresh tokens | `your-refresh-token-secret` |
-| `EMAIL_SERVICE`                | Email service provider               | `Gmail`                     |
-| `EMAIL_USER`                   | Email address to send emails         | `your-email@gmail.com`      |
-| `EMAIL_PASS`                   | Password for the email               | `your-email-password`       |
-| `FORGOT_PASSWORD_REDIRECT_URL` | URL to redirect for password reset   | `http://your-frontend.com`  |
+| **Variable**                  | **Description**                       | **Example**                                                         |
+| ----------------------------- | ------------------------------------- | ------------------------------------------------------------------- |
+| `PORT`                        | Port number for the server            | `8080`                                                              |
+| `JWT_ACCESS_TOKEN_SECRET`     | Secret for generating access tokens   | `ffaf846b0f688de6a8220bb64a1e925b7257848968b8dd43e6265ce3af78a66f`  |
+| `JWT_REFRESH_TOKEN_SECRET`    | Secret for generating refresh tokens  | `0a5b4ad907034898093e69bede2b2f20f3c382342d8be300c06e3f95f2b1b90d`  |
+| `ACCESS_TOKEN_EXPIRY`         | Expiry time for access tokens         | `1D`                                                                |
+| `REFRESH_TOKEN_EXPIRY`        | Expiry time for refresh tokens        | `10d`                                                               |
+| `CORS_ORIGIN`                 | CORS origins to allow requests from   | `http://localhost:5173,*`                                           |
+| `NODE_ENV`                    | Specify the environment               | `development`                                                       |
+| `MONGODB_URI`                 | MongoDB connection string             | `mongodb+srv://Ahaar_a_Arnab:Arnab123@cluster0.9dvikhe.mongodb.net` |
+| `USER_TEMPORARY_TOKEN_EXPIRY` | Expiry time for temporary user tokens | `20 * 60 * 1000`                                                    |
+| `EXPRESS_SESSION_SECRET`      | Secret for Express session management | `123456` `                                                          |
+```
 
----
+#### **For more details refer to .env.sample -file **
 
 ## **API Endpoints**
 
