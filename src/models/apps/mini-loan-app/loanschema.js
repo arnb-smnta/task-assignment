@@ -55,6 +55,9 @@ const loanSchema = new Schema(
         ref: "ScheduledLoanRepayment", // Refers to the ScheduledLoanRepayment collection
       },
     ],
+    amountDue: {
+      type: Number,
+    },
   },
   { timestamps: true }
 );

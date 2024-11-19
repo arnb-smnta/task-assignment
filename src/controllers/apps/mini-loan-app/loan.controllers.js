@@ -63,11 +63,13 @@ const createLoanRequest = asyncHandler(async (req, res) => {
 });
 
 const AdminApprovalForLoan = asyncHandler(async (req, res) => {
+  //!only admins can approve the loan
+
   const { loanId } = req.params;
 
-  const user = User.findById(req.user._id);
+  const user = await User.findById(req.user._id);
 
-  if (user.role !== UserRolesEnum.ADMIN) {
+  if (!user.role === UserRolesEnum.ADMIN) {
     throw new ApiError(400, "This task can not be performed by a non-admin");
   }
 
@@ -88,6 +90,8 @@ const AdminApprovalForLoan = asyncHandler(async (req, res) => {
 });
 
 const ViewLoan = asyncHandler(async (req, res) => {
+  //! Only admins or loan user can view the loan
+
   const { loanId } = req.params;
 
   const loan = await Loan.findById(loanId);
@@ -96,13 +100,15 @@ const ViewLoan = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid loan id or loan does not exists");
   }
 
-  if (!loan.userId === req.user._id) {
+  if (!(loan.userId.toString() === req.user._id.toString())) {
+    // Checking if loan user and logged in user are same
     const user = await User.findById(req.user._id);
-    if (!user.role === UserRolesEnum.ADMIN) {
+    if (!(user.role === UserRolesEnum.ADMIN)) {
+      //if not checking if the user is admin or not
       throw new ApiError(402, "You are not authorised to view this loan");
     }
   }
-
+  //Loan aggregations
   const aggreagatedLoans = await Loan.aggregate([
     {
       $match: {
@@ -128,7 +134,7 @@ const ViewLoan = asyncHandler(async (req, res) => {
     {
       $project: {
         _id: 1,
-        dueDate,
+        userId: 1,
         amount: 1,
         status: 1,
         repayments: {
@@ -140,6 +146,7 @@ const ViewLoan = asyncHandler(async (req, res) => {
               dueDate: "$$repayment.dueDate",
               amount: "$$repayment.amount",
               status: "$$repayment.status",
+              repaymentDate: "$$repayment.repaymentDate",
             },
           },
         },
@@ -154,9 +161,11 @@ const ViewLoan = asyncHandler(async (req, res) => {
 });
 
 const handleLoanRepayment = asyncHandler(async (req, res) => {
+  //! Repayment can be done only by the user or the admin
+  //! repayment can be done only for approved loans
   const { repaymentId } = req.params;
-  const { repaymentDate } = req.body;
-  const repayment = await ScheduledLoanRepayment(repaymentId);
+  let { repaymentDate } = req.body;
+  const repayment = await ScheduledLoanRepayment.findById(repaymentId);
 
   if (!repayment) {
     throw new ApiError(400, "Invalid Repayment ID");
@@ -166,8 +175,16 @@ const handleLoanRepayment = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Repayment Status Already Paid");
   }
   const loan = await Loan.findById(repayment.loanId);
-  if (!loan.status === LoanStatus.APPROVED) {
+  if (!(loan.status === LoanStatus.APPROVED)) {
     throw new ApiError(400, "Loan is not approved to make any repayments");
+  }
+
+  if (!(loan.userId.toString() === req.user._id.toString())) {
+    const user = await User.findById(req.user._id);
+
+    if (!(user.role === UserRolesEnum.ADMIN)) {
+      throw new ApiError("You are not authorised to make the repayment");
+    }
   }
 
   if (!repaymentDate) {
@@ -175,7 +192,7 @@ const handleLoanRepayment = asyncHandler(async (req, res) => {
   }
   repayment.repaymentDate = repaymentDate;
   repayment.status = repaymentStatus.PAID;
-  repayment.save();
+  repayment.save(); //no need to await
 
   return res
     .status(200)
@@ -183,6 +200,8 @@ const handleLoanRepayment = asyncHandler(async (req, res) => {
 });
 
 const viewRepaymentDetails = asyncHandler(async (req, res) => {
+  //Repayment details can only be seen by admin or loan user
+
   const { repaymentId } = req.params;
 
   const repayment = await ScheduledLoanRepayment.findById(repaymentId);
@@ -191,10 +210,22 @@ const viewRepaymentDetails = asyncHandler(async (req, res) => {
     throw new ApiError(400, "repayment schedule not found");
   }
 
+  const user = await User.findById(req.user._id);
+  if (!(user.role === UserRolesEnum.ADMIN)) {
+    const loan = await Loan.findById(repayment.loanId);
+
+    if (!(req.user._id.toString() === loan.userId.toString)) {
+      throw new ApiError(
+        402,
+        "You are not authorised to see this repayment schedule"
+      );
+    }
+  }
+
   res
     .status(200)
     .json(
-      new ApiResponse(200, repayment, "Repayemnt details fetched succesfully")
+      new ApiResponse(200, repayment, "Repayment details fetched succesfully")
     );
 });
 

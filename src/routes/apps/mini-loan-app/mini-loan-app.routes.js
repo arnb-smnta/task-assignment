@@ -5,6 +5,7 @@ import {
   createLoanRequest,
   handleLoanRepayment,
   ViewLoan,
+  viewRepaymentDetails,
 } from "../../../controllers/apps/mini-loan-app/loan.controllers.js";
 
 const router = Router();
@@ -14,6 +15,9 @@ router.route("/").post(createLoanRequest);
 
 router.route("/approve/:loanId").post(AdminApprovalForLoan);
 router.route("/view/:loanId").get(ViewLoan);
-router.route("/repayment/:repaymentId").post(handleLoanRepayment);
+router
+  .route("/repayment/:repaymentId")
+  .post(handleLoanRepayment)
+  .get(viewRepaymentDetails);
 
 export default router;
