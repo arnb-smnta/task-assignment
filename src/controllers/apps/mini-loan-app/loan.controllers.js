@@ -229,10 +229,19 @@ const viewRepaymentDetails = asyncHandler(async (req, res) => {
     );
 });
 
+const viewAlluserLoans = asyncHandler(async (req, res) => {
+  const loans = await Loan.find({ userId: req.user._id });
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, { loans }, "Loans Succesfully fetched"));
+});
+
 export {
   createLoanRequest,
   AdminApprovalForLoan,
   ViewLoan,
   handleLoanRepayment,
   viewRepaymentDetails,
+  viewAlluserLoans,
 };
