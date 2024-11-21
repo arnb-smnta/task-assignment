@@ -4,6 +4,8 @@ import {
   AdminApprovalForLoan,
   createLoanRequest,
   handleLoanRepayment,
+  viewAllLoanofAParticularUser,
+  viewAllunApprovedLoan,
   viewAlluserLoans,
   ViewLoan,
   viewRepaymentDetails,
@@ -22,5 +24,6 @@ router
   .get(viewRepaymentDetails);
 
 router.route("/viewLoans").get(viewAlluserLoans);
-
+router.route("/viewUnapprovedLoans").get(viewAllunApprovedLoan);
+router.route("/viewloansOfAUser/:userId").get(viewAllLoanofAParticularUser);
 export default router;

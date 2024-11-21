@@ -144,6 +144,7 @@ const loginUser = asyncHandler(async (req, res) => {
     "-password -refreshToken -emailVerificationToken -emailVerificationExpiry"
   );
 
+  console.log(loggedInUser);
   // TODO: Add more options to make cookie more secure and reliable
   const options = {
     httpOnly: true,

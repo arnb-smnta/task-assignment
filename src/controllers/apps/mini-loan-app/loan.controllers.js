@@ -64,7 +64,7 @@ const createLoanRequest = asyncHandler(async (req, res) => {
 
 const AdminApprovalForLoan = asyncHandler(async (req, res) => {
   //!only admins can approve the loan
-
+  // ! Admins cannot approve their home loan functionalty not added yet
   const { loanId } = req.params;
 
   const user = await User.findById(req.user._id);
@@ -237,6 +237,45 @@ const viewAlluserLoans = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { loans }, "Loans Succesfully fetched"));
 });
 
+const viewAllunApprovedLoan = asyncHandler(async (req, res) => {
+  //only admins can access this route
+
+  const user = await User.findById(req.user._id);
+
+  if (!(user.role === `${UserRolesEnum.ADMIN}`)) {
+    throw new ApiError(402, "You are not authorised to access this route");
+  }
+
+  const loans = await Loan.find({ status: "PENDING" });
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, loans, "UnApproved Loans Data fetched"));
+});
+const viewAllLoanofAParticularUser = asyncHandler(async (req, res) => {
+  //This route can only be accessed by admin
+
+  const adminUser = await User.findById(req.user._id);
+
+  if (!(adminUser.role === `${UserRolesEnum.ADMIN}`)) {
+    throw new ApiError(402, "Only admins can access this route");
+  }
+
+  const { userId } = req.params;
+
+  const user = await User.findById(userId);
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  const loans = await Loan.find({ userId: userId });
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, loans, "Loans succesfully fetched"));
+});
+
 export {
   createLoanRequest,
   AdminApprovalForLoan,
@@ -244,4 +283,6 @@ export {
   handleLoanRepayment,
   viewRepaymentDetails,
   viewAlluserLoans,
+  viewAllLoanofAParticularUser,
+  viewAllunApprovedLoan,
 };
