@@ -27,6 +27,7 @@ const createLoanRequest = asyncHandler(async (req, res) => {
     amount,
     term,
     status: "PENDING",
+    amountDue: amount,
   });
 
   const weeklyRepayment = amount / term;
@@ -137,6 +138,7 @@ const ViewLoan = asyncHandler(async (req, res) => {
         userId: 1,
         amount: 1,
         status: 1,
+        amountDue: 1,
         repayments: {
           $map: {
             input: "$repayments",
@@ -193,6 +195,12 @@ const handleLoanRepayment = asyncHandler(async (req, res) => {
   repayment.repaymentDate = repaymentDate;
   repayment.status = repaymentStatus.PAID;
   repayment.save(); //no need to await
+  loan.amountDue = loan.amountDue - repayment.amount; //updating the loan status
+
+  if (loan.amountDue < 1) {
+    loan.status = "PAID";
+  }
+  loan.save();
 
   return res
     .status(200)
@@ -246,7 +254,29 @@ const viewAllunApprovedLoan = asyncHandler(async (req, res) => {
     throw new ApiError(402, "You are not authorised to access this route");
   }
 
-  const loans = await Loan.find({ status: "PENDING" });
+  const loans = await Loan.aggregate([
+    {
+      $match: {
+        status: "PENDING",
+      },
+    },
+    {
+      $lookup: {
+        from: "users", // The name of the User collection in MongoDB
+        localField: "userId", // Field in Loan collection
+        foreignField: "_id", // Field in User collection
+        as: "userId", // Name of the field for joined data
+        pipeline: [
+          {
+            $project: {
+              username: 1,
+              _id: 1,
+            },
+          },
+        ],
+      },
+    },
+  ]);
 
   res
     .status(200)
