@@ -357,6 +357,110 @@ This module adds functionality to manage loans within the same project. It suppo
 
 ---
 
+Here’s an example of how you can document these routes in your README file with proper structure and clarity:
+
+---
+
+### 6. Get All Loans
+
+**Endpoint:** `/viewLoans`  
+**Method:** `GET`  
+**Description:** Fetches all loan records from the database.
+
+**Response:**
+
+- **200 OK:** Returns an array of all loan objects.
+- **500 Internal Server Error:** If something goes wrong on the server.
+
+**Example Response:**
+
+```json
+[
+  {
+    "loanId": "12345",
+    "userId": "67890",
+    "amount": 5000,
+    "status": "approved",
+    "createdAt": "2024-11-21T10:00:00Z"
+  },
+  {
+    "loanId": "12346",
+    "userId": "67891",
+    "amount": 10000,
+    "status": "pending",
+    "createdAt": "2024-11-20T12:30:00Z"
+  }
+]
+```
+
+---
+
+### 7. Get Unapproved Loans
+
+**Endpoint:** `/viewUnapprovedLoans`  
+**Method:** `GET`  
+**Description:** Fetches all loans that are not yet approved.
+
+**Response:**
+
+- **200 OK:** Returns an array of unapproved loan objects.
+- **500 Internal Server Error:** If something goes wrong on the server.
+
+**Example Response:**
+
+```json
+[
+  {
+    "loanId": "12347",
+    "userId": "67892",
+    "amount": 15000,
+    "status": "pending",
+    "createdAt": "2024-11-19T14:45:00Z"
+  }
+]
+```
+
+---
+
+### 8. Get Loans of a Specific User
+
+**Endpoint:** `/viewloansOfAUser/:userId`  
+**Method:** `GET`  
+**Description:** Fetches all loans associated with a particular user by their unique `userId`.
+
+**Path Parameters:**
+
+- `userId` (string, required): The unique ID of the user whose loans you want to fetch.
+
+**Response:**
+
+- **200 OK:** Returns an array of loan objects belonging to the specified user.
+- **404 Not Found:** If no loans are found for the given user ID.
+- **500 Internal Server Error:** If something goes wrong on the server.
+
+**Example Response:**
+
+```json
+[
+  {
+    "loanId": "12348",
+    "userId": "67893",
+    "amount": 7500,
+    "status": "approved",
+    "createdAt": "2024-11-18T09:20:00Z"
+  },
+  {
+    "loanId": "12349",
+    "userId": "67893",
+    "amount": 2500,
+    "status": "pending",
+    "createdAt": "2024-11-17T16:10:00Z"
+  }
+]
+```
+
+---
+
 ## **Access Control**
 
 - **Users:**
@@ -367,6 +471,8 @@ This module adds functionality to manage loans within the same project. It suppo
   - Can approve loans.
   - Can view any loan or repayment details.
   - Can handle repayments on behalf of any user.
+  - Can view unaprroved Loans
+  - can view loans by user
 
 ---
 
@@ -405,5 +511,3 @@ The API uses structured error responses. Example:
 This project is licensed under the [MIT License](LICENSE).
 
 ---
-
-Let me know if you’d like to include additional details, such as testing instructions or architectural diagrams!

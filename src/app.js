@@ -87,7 +87,9 @@ app.get("/", (req, res) => {
     `https://github.com/arnb-smnta/expense-split-prod-backend/blob/main/src/app.js`
   );
 });
-
+app.get("/", (req, res) => {
+  res.redirect(`${process.env.DOCUMENTATION_URL}`);
+});
 // common error handling middleware
 app.use(errorHandler);
 
