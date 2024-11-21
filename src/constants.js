@@ -17,6 +17,13 @@ export const OrderStatusEnum = {
   DELIVERED: "DELIVERED",
 };
 
+export const TaskCategoryEnum = {
+  WORK: "WORK",
+  PERSONAL: "PERSONAL",
+  SHOPPING: "SHOPPING",
+  OTHERS: "OTHERS",
+};
+
 export const LoanStatus = {
   PENDING: "PENDING",
   APPROVED: "APPROVED",
