@@ -1,15 +1,7 @@
-# mini-loan-app-backend
-
-documentationURL-https://documenter.getpostman.com/view/27224450/2sAYBRFtXE
-
-Here's a clean and easy-to-read **README** documentation for your authentication and user management system:
-
 ---
-
 # **User Authentication API**
 
 This API provides a comprehensive set of endpoints to handle user authentication, authorization, and profile management. It includes functionalities such as user registration, login, email verification, password reset, and role management.
-
 ---
 
 ## **Table of Contents**
