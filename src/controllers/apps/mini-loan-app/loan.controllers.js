@@ -222,7 +222,7 @@ const viewRepaymentDetails = asyncHandler(async (req, res) => {
   if (!(user.role === UserRolesEnum.ADMIN)) {
     const loan = await Loan.findById(repayment.loanId);
 
-    if (!(req.user._id.toString() === loan.userId.toString)) {
+    if (!(req.user._id.toString() === loan.userId.toString())) {
       throw new ApiError(
         402,
         "You are not authorised to see this repayment schedule"
