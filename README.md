@@ -231,6 +231,259 @@ The API uses a consistent error format. If an error occurs, the response will ha
 
 ---
 
+# Task Management Application
+
+This repository contains a **Task Management Application** that allows users to create, view, edit, categorize, and manage tasks. The application uses **Node.js**, **Express**, and **MongoDB** to handle backend operations and **JWT** for authentication.
+
+---
+
+## Features
+
+1. **Task Management:**
+
+   - Create tasks with title, description, due date, and time.
+   - View a list of all tasks associated with a user.
+   - Mark tasks as completed.
+   - Edit task details (title, description, due date, category, or time).
+   - Delete tasks.
+   - Categorize tasks into predefined categories: **WORK**, **PERSONAL**, **SHOPPING**, or **OTHERS**.
+
+2. **Validation:**
+
+   - Task titles and descriptions are required.
+   - Due dates must be today or in the future.
+   - Time, if provided, must follow the `HH:mm` format and not be in the past for the current day.
+   - Tasks marked as "completed" cannot be edited or marked again.
+
+3. **Persistence:**
+
+   - Tasks are stored in **MongoDB** for retrieval and modification.
+
+4. **Authentication:**
+
+   - Each task is tied to a specific user (`userId`).
+   - JWT-based authentication is used to protect routes.
+
+5. **Error Handling:**
+
+   - Comprehensive error handling with meaningful error messages.
+
+6. **Bonus Features:**
+   - Ability to set due dates for tasks.
+   - Categorize tasks into predefined groups.
+
+---
+
+## Code Structure
+
+The application is divided into logical modules to ensure clarity and maintainability:
+
+1. **Models:**
+
+   - `task-schema.js`: Defines the structure and validation logic for tasks.
+
+2. **Controllers:**
+
+   - `task.controllers.js`: Handles the core functionality for managing tasks, including:
+     - Creating a task.
+     - Viewing all tasks or task details.
+     - Editing, marking as completed, and deleting tasks.
+     - Filtering tasks by categories.
+
+3. **Routes:**
+
+   - `task.routes.js`: Defines the API endpoints for task-related operations.
+   - Routes are protected using `verifyJWT` middleware for authenticated access.
+
+4. **Utils:**
+
+   - `ApiError.js`: For consistent error handling.
+   - `ApiResponse.js`: Standardizes success response format.
+   - `asyncHandler.js`: Simplifies async route handling.
+
+5. **Validators:**
+   - Custom validators ensure input data integrity, such as MongoDB ID validation and task creation checks.
+
+---
+
+## API Documentation
+
+### Base URL
+
+```
+http://localhost:<PORT>/api/v1/tasks
+```
+
+### Endpoints
+
+#### 1. **Create a Task**
+
+**POST** `/`
+
+- **Body:**
+  ```json
+  {
+    "title": "Task Title",
+    "description": "Task Description",
+    "dueDate": "2024-11-24",
+    "time": "14:30",
+    "category": "WORK"
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "status": 200,
+    "data": {
+      "_id": "task-id",
+      "title": "Task Title",
+      "description": "Task Description",
+      "dueDate": "2024-11-24T00:00:00.000Z",
+      "time": "14:30",
+      "category": "WORK",
+      "completed": false,
+      "userId": "user-id",
+      "createdAt": "2024-11-23T12:00:00.000Z",
+      "updatedAt": "2024-11-23T12:00:00.000Z"
+    },
+    "message": "Task created successfully"
+  }
+  ```
+
+#### 2. **View All Tasks**
+
+**GET** `/`
+
+- **Response:**
+  ```json
+  {
+    "status": 200,
+    "data": [
+      {
+        "_id": "task-id",
+        "title": "Task Title",
+        "description": "Task Description",
+        "dueDate": "2024-11-24T00:00:00.000Z",
+        "time": "FULL_DAY",
+        "category": "OTHERS",
+        "completed": false,
+        "userId": "user-id",
+        "createdAt": "2024-11-23T12:00:00.000Z",
+        "updatedAt": "2024-11-23T12:00:00.000Z"
+      }
+    ],
+    "message": "Tasks fetched successfully"
+  }
+  ```
+
+#### 3. **Mark Task as Completed**
+
+**POST** `/:taskId`
+
+- **Response:**
+  ```json
+  {
+    "status": 200,
+    "data": {},
+    "message": "Task successfully updated"
+  }
+  ```
+
+#### 4. **Edit a Task**
+
+**PATCH** `/:taskId`
+
+- **Body:** (Optional fields to update)
+  ```json
+  {
+    "title": "Updated Title",
+    "description": "Updated Description",
+    "dueDate": "2024-11-25",
+    "time": "15:00",
+    "category": "PERSONAL"
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "status": 200,
+    "data": { "task-object" },
+    "message": "Task successfully edited"
+  }
+  ```
+
+#### 5. **Delete a Task**
+
+**DELETE** `/:taskId`
+
+- **Response:**
+  ```json
+  {
+    "status": 200,
+    "data": {},
+    "message": "Task deleted successfully"
+  }
+  ```
+
+#### 6. **View Task Details**
+
+**GET** `/:taskId`
+
+- **Response:**
+  ```json
+  {
+    "status": 200,
+    "data": { "task-object" },
+    "message": "Task fetched successfully"
+  }
+  ```
+
+#### 7. **Get Tasks by Category**
+
+**GET** `/category/:categoryId`
+
+- **Response:**
+  ```json
+  {
+    "status": 200,
+    "data": [ { "task-object" } ],
+    "message": "Tasks fetched successfully"
+  }
+  ```
+
+---
+
+## Key Decisions and Highlights
+
+- **Validation:**
+  - Integrated both schema-level and custom validation to ensure task integrity.
+- **Authorization:**
+  - Ensured users can only access or modify their own tasks.
+- **Design:**
+  - Followed RESTful conventions for API design.
+- **Error Handling:**
+  - Centralized error handling ensures uniform and meaningful error responses.
+
+---
+
+## Optional Enhancements
+
+- Add a frontend for easier interaction.
+- Implement unit tests using Jest or Mocha.
+- Integrate CI/CD for automated testing and deployment.
+
+---
+
+## Submission
+
+- [GitHub Repository Link](#)
+
+---
+
+## Contact
+
+For queries or suggestions, reach out to the repository maintainer.
+
 ## **License**
 
 This project is licensed under the [MIT License](LICENSE).
