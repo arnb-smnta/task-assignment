@@ -1,8 +1,14 @@
+# Task-Management APP (Backend)
+
+[Hosted URL Documentation](https://documenter.getpostman.com/view/27224450/2sAYBUCrsL)
+
+The backend is hosted and accessible at: https://task-assignment-production.up.railway.app.
+
 ---
+
 # **User Authentication API**
 
-This API provides a comprehensive set of endpoints to handle user authentication, authorization, and profile management. It includes functionalities such as user registration, login, email verification, password reset, and role management.
----
+## This API provides a comprehensive set of endpoints to handle user authentication, authorization, and profile management. It includes functionalities such as user registration, login, email verification, password reset, and role management.
 
 ## **Table of Contents**
 
