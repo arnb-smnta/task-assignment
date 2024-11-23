@@ -1,5 +1,5 @@
 import { body, param } from "express-validator";
-const createTaskValidator = () => {
+export const createTaskValidator = () => {
   return [
     body("title")
       .trim()
@@ -26,5 +26,3 @@ const createTaskValidator = () => {
       }),
   ];
 };
-
-export { createTaskValidator };

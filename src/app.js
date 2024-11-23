@@ -80,7 +80,7 @@ import userRouter from "./routes/apps/auth/user.routes.js";
 import taskrouter from "./routes/apps/task-app/task.routes.js";
 // * App apis
 app.use("/api/v1/users", userRouter);
-app.use("/api/v1/tasks/", taskrouter);
+app.use("/api/v1/tasks", taskrouter);
 app.get("/", (req, res) => {
   res.redirect(`${process.env.DOCUMENTATION_URL}`);
 });

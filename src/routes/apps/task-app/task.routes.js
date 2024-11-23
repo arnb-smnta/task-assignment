@@ -18,13 +18,13 @@ router.use(verifyJWT);
 
 router
   .route("/")
-  .post(createTaskValidator, validate, createTask)
+  .post(createTaskValidator(), validate, createTask)
   .get(viewAllTask);
 router
   .route("/:taskId")
   .get(mongoIdPathVariableValidator("taskId"), validate, viewTaskDetails)
-  .patch(mongoIdPathVariableValidator("taskId"), validate, editTask)
   .post(mongoIdPathVariableValidator("taskId"), validate, markTaskasCompleted)
+  .patch(mongoIdPathVariableValidator("taskId"), validate, editTask)
   .delete(mongoIdPathVariableValidator("taskId"), validate, deleteTask);
 
 router.route("/category/:categoryId").get(getTasksbyCategories);

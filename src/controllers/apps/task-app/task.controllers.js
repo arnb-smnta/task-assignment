@@ -1,12 +1,12 @@
-import { TaskCategoryEnum } from "../../../constants";
-import { Task } from "../../../models/apps/task-app/task-schema";
-import { ApiError } from "../../../utils/ApiError";
-import { ApiResponse } from "../../../utils/ApiResponse";
-import { asyncHandler } from "../../../utils/asyncHandler";
+import { TaskCategoryEnum } from "../../../constants.js";
+import { Task } from "../../../models/apps/task-app/task-schema.js";
+import { ApiError } from "../../../utils/ApiError.js";
+import { ApiResponse } from "../../../utils/ApiResponse.js";
+import { asyncHandler } from "../../../utils/asyncHandler.js";
 
 const createTask = asyncHandler(async (req, res) => {
   const { title, description, dueDate, category, time } = req.body;
-
+  console.log("in task");
   //Just a safe check although valodator must catch it
   if (!title || !description || !dueDate) {
     throw new ApiError(
@@ -17,7 +17,6 @@ const createTask = asyncHandler(async (req, res) => {
   const currentTimeStamp = Date.now(); // time in miliseconds
 
   const currentDate = new Date();
-
   const taskDueDate = new Date(dueDate);
 
   if (taskDueDate.getTime() < currentTimeStamp) {
@@ -77,7 +76,9 @@ const createTask = asyncHandler(async (req, res) => {
     userId: req.user._id,
   });
 
-  res.status(200).json(new ApiResponse(200, task, "Task created successfully"));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, task, "Task created successfully"));
 });
 
 const viewAllTask = asyncHandler(async (req, res) => {
@@ -89,7 +90,8 @@ const viewAllTask = asyncHandler(async (req, res) => {
 });
 
 const markTaskasCompleted = asyncHandler(async (req, res) => {
-  const { taskId } = req.body;
+  const { taskId } = req.params;
+  console.log(taskId);
 
   const task = await Task.findById(taskId);
 
@@ -109,9 +111,11 @@ const markTaskasCompleted = asyncHandler(async (req, res) => {
 
   //We can await this save but i am choosing no to await beacuse completed is shown in the frontend normally as soon as it clicked we should not hold the thread for this task
 
-  await task.save();
+  await task.save({ validateBeforeSave: false });
 
-  res.status(200).json(new ApiResponse(200, {}, "task succesfully updated"));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "task succesfully updated"));
 });
 
 const editTask = asyncHandler(async (req, res) => {
@@ -125,6 +129,10 @@ const editTask = asyncHandler(async (req, res) => {
 
   if (task.userId.toString() !== req.user._id.toString()) {
     throw new ApiError(401, "You are not authorised to view this task");
+  }
+
+  if (task.completed) {
+    throw new ApiError(400, "Task is completed you can not modify it");
   }
   const { title, description, dueDate, time, category } = req.body;
 
@@ -154,8 +162,8 @@ const editTask = asyncHandler(async (req, res) => {
   if (time && time !== "FULL_DAY") {
     const [hours, minutes] = time.split(":").map(Number);
     if (
-      hours.isNaN() ||
-      minutes.isNaN() ||
+      isNaN(hours) ||
+      isNaN(minutes) ||
       hours < 0 ||
       hours > 23 ||
       minutes < 0 ||
@@ -164,12 +172,15 @@ const editTask = asyncHandler(async (req, res) => {
       throw new ApiError(400, "Invalid time format");
     }
 
-    const currentTimeStamp = Date.now();
-    const taskDateTime = new Date(task.date);
+    const now = new Date();
+    const taskDateTime = new Date(task.dueDate);
     taskDateTime.setHours(hours, minutes, 0, 0);
     //getTime() gets the miliseconds since 1970 || new Date creates new instances so === will come false even if the date time is same
-    if (taskDateTime.getTime() < currentTimeStamp.getTime()) {
-      throw new ApiError("time must not be in the past if due date is today");
+    if (taskDateTime < now) {
+      throw new ApiError(
+        400,
+        "time must not be in the past if due date is today"
+      );
     }
 
     task.time = time;
@@ -179,10 +190,10 @@ const editTask = asyncHandler(async (req, res) => {
     task.time = time;
   }
 
-  await task.save();
+  await task.save({ validateBeforeSave: false });
   return res
     .status(200)
-    .json(new ApiResponse(200, task, "Task succesfully fetched"));
+    .json(new ApiResponse(200, task, "Task succesfully edited"));
 });
 
 const viewTaskDetails = asyncHandler(async (req, res) => {
@@ -197,18 +208,22 @@ const viewTaskDetails = asyncHandler(async (req, res) => {
     throw new ApiError(403, "You are not authorised to view this task");
   }
 
-  res.status(200).json(new ApiError(200, task, "Task fetched succesfully"));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, task, "Task fetched succesfully"));
 });
 const getTasksbyCategories = asyncHandler(async (req, res) => {
-  const { category } = req.params;
+  const { categoryId } = req.params;
 
-  if (!Object.values(TaskCategoryEnum).includes(category)) {
+  if (!Object.values(TaskCategoryEnum).includes(categoryId)) {
     throw new ApiError(400, "Invalid Category");
   }
 
-  const task = await Task.find({ category: category, userId: req.user._id });
+  const task = await Task.find({ category: categoryId, userId: req.user._id });
 
-  res.status(200).json(new ApiResponse(200, task, "Tasks fetched succesfully"));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, task, "Tasks fetched succesfully"));
 });
 const deleteTask = asyncHandler(async (req, res) => {
   const { taskId } = req.params;
@@ -225,7 +240,9 @@ const deleteTask = asyncHandler(async (req, res) => {
 
   await Task.deleteOne({ _id: taskId });
 
-  res.status(200).json(new ApiResponse(200, {}, "Task deleted successfully"));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Task deleted successfully"));
 });
 export {
   createTask,
